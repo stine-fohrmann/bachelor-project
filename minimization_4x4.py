@@ -3,27 +3,30 @@ import numpy as np
 
 m = GEKKO(remote=False)
 
+# define grid size
 n = 4
-'''
-cols = []
-for j in range(n):
-    row = []
-    for i in range(n):
-        row_item = m.Array(m.Var, 1, integer=True, lb=0, ub=1)
-        row.append(row_item)
-    # print(row)
-    cols.append(row)
-print(cols[0][0])
-'''
 
-x11, x12, x13, x14, x21, x22, x23, x24, x31, x32, x33, x34, x41, x42, x43, x44 = m.Array(m.Var, 16, integer=True, lb=0,
-                                                                                         ub=1)
-cols = np.array([[x11, x12, x13, x14], [x21, x22, x23, x24], [x31, x32, x33, x34], [x41, x42, x43, x44]])
+# create n*n cells
+cells = np.array([])
+for i in range(n * n):
+    x = m.Var(integer=True, lb=0, ub=1)
+    cells = np.append(cells, x)
+# print(cells)
+cols = np.array_split(cells, n)
+print(cols)
 rows = np.transpose(cols)
 
-# objective function
-f = 1 * x11 + 2 * (x12 + x21) + 3 * (x13 + x22 + x31) + 4 * (x14 + x23 + x32 + x41) + 5 * (x24 + x33 + x42) + 6 * (
-        x34 + x43) + 7 * x44
+# creating 16 cells manually (old)
+# x11, x12, x13, x14, x21, x22, x23, x24, x31, x32, x33, x34, x41, x42, x43, x44 = m.Array(m.Var, 16, integer=True, lb=0, ub=1)
+# cols = np.array([[x11, x12, x13, x14], [x21, x22, x23, x24], [x31, x32, x33, x34], [x41, x42, x43, x44]])
+
+
+# define objective function
+# f = 1 * x11 + 2 * (x12 + x21) + 3 * (x13 + x22 + x31) + 4 * (x14 + x23 + x32 + x41) + 5 * (x24 + x33 + x42) + 6 * (x34 + x43) + 7 * x44
+f = 1 * cols[0][0] + 2 * (cols[0][1] + cols[1][0]) + 3 * (cols[0][2] + cols[1][1] + cols[2][0]) \
+     + 4 * (cols[0][3] + cols[1][2] + cols[2][1] + cols[3][0]) + 5 * (cols[1][3] + cols[2][2] + cols[3][1]) \
+     + 6 * (cols[2][3] + cols[3][2]) + 7 * cols[3][3]
+
 m.Minimize(f)
 
 # add constraint equations
@@ -33,8 +36,8 @@ for i in range(n):
     # binary balance for rows
     m.Equation(sum(rows[i]) - n * (1 / 2) == 0)
 
-for i in range(n-1):
-    for j in range(1, n-1):
+for i in range(n - 1):
+    for j in range(1, n - 1):
         if i != j:
             # uniqueness for columns
             m.Equation(sum(abs(cols[i] - cols[j])) > 0)
@@ -43,15 +46,7 @@ for i in range(n-1):
 
 # define initial clues
 m.Equation([
-    # x11 == 0,
-    # x12 == 0,
-    # x13 == 0,
-    # x21 == 0,
-    # x22 == 0,
-    # x33 == 0,
-    # x32 == 0,
-    # x23 == 0,
-
+    rows[0][0] == 0,
 ])
 
 m.options.SOLVER = 1
@@ -65,7 +60,7 @@ print('Objective: ', -m.options.OBJFCNVAL)
 # print(int(x13.value[0]), int(x23.value[0]), int(x33.value[0]), int(x43.value[0]))
 # print(int(x14.value[0]), int(x24.value[0]), int(x34.value[0]), int(x44.value[0]))
 
-# print using array of rows
+# print grid using array of rows
 for row in rows:
     print([int(cell.value[0]) for cell in row])
 
@@ -77,6 +72,7 @@ for row in rows:
 # print(sum(abs(rows[1] - rows[3])))
 # print(sum(abs(rows[2] - rows[3])))
 
+'''
 f_value = 1 * x11.value[0] \
           + 2 * (x12.value[0] + x21.value[0]) \
           + 3 * (x13.value[0] + x22.value[0] + x31.value[0]) \
@@ -85,3 +81,4 @@ f_value = 1 * x11.value[0] \
           + 6 * (x34.value[0] + x43.value[0]) \
           + 7 * (x44.value[0])
 print(f'Objective function value: {f_value}')
+'''
