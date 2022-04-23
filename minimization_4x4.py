@@ -46,6 +46,7 @@ for i in range(n):
             # uniqueness for rows
             m.Equation(sum(abs(rows[i] - rows[j])) > 1)
 
+
 # constraint 3: no triplets
 # for i in range(int(n)):
 #     # i = 0
@@ -55,19 +56,25 @@ for i in range(n):
 #         # m.Equation(abs(cols[i][j] + cols[i][j + 1] + cols[i][j + 2] - 3 / 2) == 1 / 2)
 #         m.Equation(abs(rows[j][i] + rows[j + 1][i] + rows[j + 2][i] - 3 / 2) == 1 / 2)
 
-# define initial clues
-m.Equation([
-    # rows[0][0] == 0,
-    # rows[0][1] == 0,
-    # rows[1][0] == 0,
-    # rows[1][1] == 0,
-])
+# method for defining clues / cell values
+def set_cell_value(row_index, col_index, value):
+    m.Equation(rows[row_index][col_index] == value)
+
+
+# define clues / cell values
+set_cell_value(0, 0, 1)
+set_cell_value(0, 1, 1)
+set_cell_value(1, 0, 1)
+# set_cell_value(1, 1, 1)
 
 m.options.SOLVER = 1
 # m.solve()
 
 try:
     m.solve(disp=True)  # solve
+    # print filled out grid
+    for row in rows:
+        print([int(cell.value[0]) for cell in row])
 except:
     print('Not successful')
     from gekko.apm import get_file
@@ -81,9 +88,6 @@ except:
 
 print('Objective: ', -m.options.OBJFCNVAL)
 
-# print filled out grid
-for row in rows:
-    print([int(cell.value[0]) for cell in row])
 
 # print constraint equations to test whether they are satisfied
 # print(sum(abs(rows[0] - rows[1])))
