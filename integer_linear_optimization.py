@@ -1,3 +1,5 @@
+import random
+
 from gekko import GEKKO
 import numpy as np
 
@@ -22,11 +24,12 @@ f = 0
 cost = 0
 for i in range(n):
     for j in range(n):
+        # print(1.1**cost)
+        f += 1.1**cost * cols[i][j]
         cost += 1
-        # print(cost)
-        f += cost * cols[i][j]
 # minimize objective function
 m.Minimize(f)
+#m.Maximize(f)
 
 # add constraint equations
 # constraint 1: binary balance
@@ -65,10 +68,11 @@ def set_cell_value(row_index, col_index, value):
 
 
 # define clues / cell values
-# set_cell_value(0, 0, 1)
-# set_cell_value(0, 1, 1)
-# set_cell_value(1, 0, 1)
-# set_cell_value(1, 1, 1)
+#set_cell_value(0, 0, 1)
+#set_cell_value(0, 1, 1)
+#set_cell_value(1, 0, 1)
+#set_cell_value(1, 1, 1)
+#set_cell_value(3, 0, 1)
 
 m.options.SOLVER = 1
 m.solver_options = ['minlp_maximum_iterations 10000', 'minlp_max_iter_with_int_sol 500']
@@ -91,13 +95,17 @@ except:
 
 print('Objective: ', -m.options.OBJFCNVAL)
 
-# testing if constraint 2 is fulfilled
-# print(sum(abs(rows[0] - rows[1])))
-# print(sum(abs(rows[0] - rows[2])))
-# print(sum(abs(rows[0] - rows[3])))
-# print(sum(abs(rows[1] - rows[2])))
-# print(sum(abs(rows[1] - rows[3])))
-# print(sum(abs(rows[2] - rows[3])))
+# print value of objective function
+'''
+f_value = 0
+cost = 0
+for i in range(n):
+    for j in range(n):
+        # print(1.1**cost)
+        f_value += 1.1**cost * cols[i][j].value[0]
+        cost += 1
+print(f_value)
+'''
 
 # testing if constraint 3 is fulfilled
 '''
