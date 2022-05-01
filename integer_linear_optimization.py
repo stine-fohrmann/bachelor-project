@@ -29,8 +29,8 @@ for i in range(n):
         cost += 1
         # f += cost * cols[i][j]
 # minimize objective function
-# m.Minimize(f)
-m.Maximize(f)
+m.Minimize(f)
+# m.Maximize(f)
 
 # add constraint equations
 # constraint 1: binary balance
@@ -50,14 +50,16 @@ for i in range(n):
             m.Equation(sum(abs(rows[i] - rows[j])) > 1)
 
 # constraint 3: no triplets
-# for i in range(int(3)):
-#     # i = 0
+# for i in range(n):
 #     for j in range(n - 2):
-#         # print(j)
-#         # m.Equation(abs(rows[i][j] + rows[i][j + 1] + rows[i][j + 2] - 3 / 2) == 1 / 2)
+#         # no triplets in rows
 #         m.Equation(abs((rows[i][j] - 1 / 2) + (rows[i][j + 1] - 1 / 2) + (rows[i][j + 2] - 1 / 2)) == 1 / 2)
+#         # m.Equation(abs(rows[i][j] + rows[i][j + 1] + rows[i][j + 2] - 3 / 2) == 1 / 2)
+#         # m.Equation(abs(cols[j][i] + cols[j + 1][i] + cols[j + 2][i] - 3 / 2) == 1 / 2)
+#         # no triplets in columns
+#         m.Equation(abs((cols[i][j] - 1 / 2) + (cols[i][j + 1] - 1 / 2) + (cols[i][j + 2] - 1 / 2)) == 1 / 2)
+#         # m.Equation(abs(rows[j][i] + rows[j + 1][i] + rows[j + 2][i] - 3 / 2) == 1 / 2)
 #         # m.Equation(abs(cols[i][j] + cols[i][j + 1] + cols[i][j + 2] - 3 / 2) == 1 / 2)
-#         m.Equation(abs(rows[j][i] + rows[j + 1][i] + rows[j + 2][i] - 3 / 2) == 1 / 2)
 
 
 # additional constraint based on objective value
