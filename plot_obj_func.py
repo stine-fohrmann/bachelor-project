@@ -15,9 +15,10 @@ while len(fibonacci) < len(x):
     fibonacci = np.append(fibonacci, nth)
 
 fig1 = plt.figure(1)
-plt.plot(x, fibonacci)
-plt.title('Fibonacci sequence')
-# plt.legend()
+plt.plot(x, fibonacci, label='Fibonacci sequence')
+plt.plot(x, x, label='simple cost distribution')
+plt.title('Different cost distributions')
+plt.legend()
 
 plt.show()
 
